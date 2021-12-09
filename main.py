@@ -372,9 +372,6 @@ def solvepuzzleday6part1(file1):
 
 
 def addLanterntoDays(i, starting, numdays, lookupTable):
-    #    if lookupTable[i][starting] != -1:
-    #        return lookupTable[i][starting]
-
     j = i + starting
     sum = 0
     if j > numdays - 1:
@@ -441,7 +438,7 @@ def solvepuzzleday7part2(file1):
     print(min(sum, sum2))
 
 
-def solvepuzzleday8part1(file1):
+def solvepuzzleday8part1(file1) -> None:
     Lines = file1.readlines()
     sum = 0
     for l in Lines:
@@ -547,10 +544,9 @@ def solvepuzzleday8part2(file1):
 
 def lessthanfourneighbors(j, i, mtrx):
     if mtrx[j][i] < mtrx[j][i - 1] and mtrx[j][i] < mtrx[j + 1][i] and mtrx[j][i] < mtrx[j][i + 1] and \
-           mtrx[j][i] < mtrx[j - 1][i]:
+            mtrx[j][i] < mtrx[j - 1][i]:
         return True
     return False
-
 
 
 def solvepuzzleday9part1(file1):
@@ -570,21 +566,21 @@ def solvepuzzleday9part1(file1):
     for i in range(1, linelength + 1):
         for j in range(1, matrixheight + 1):
             if lessthanfourneighbors(j, i, mtrx):
-                sum += 1+mtrx[j][i]
+                sum += 1 + mtrx[j][i]
     print(sum)
 
 
 def traverse(mtrx, i, j, visitedCells):
-    sum=1
-    visitedCells.add((i,j))
-    if mtrx[i][j-1]<9 and (i, j-1) not in visitedCells:
-        sum+=traverse(mtrx, i, j-1, visitedCells)
-    if mtrx[i+1][j]<9 and (i+1, j) not in visitedCells:
-        sum+=traverse(mtrx, i+1, j, visitedCells)
-    if mtrx[i][j+1] < 9 and (i, j+1) not in visitedCells:
-        sum += traverse(mtrx, i, j+1, visitedCells)
-    if mtrx[i-1][j] < 9 and (i-1, j) not in visitedCells:
-        sum += traverse(mtrx, i-1, j, visitedCells)
+    sum = 1
+    visitedCells.add((i, j))
+    if mtrx[i][j - 1] < 9 and (i, j - 1) not in visitedCells:
+        sum += traverse(mtrx, i, j - 1, visitedCells)
+    if mtrx[i + 1][j] < 9 and (i + 1, j) not in visitedCells:
+        sum += traverse(mtrx, i + 1, j, visitedCells)
+    if mtrx[i][j + 1] < 9 and (i, j + 1) not in visitedCells:
+        sum += traverse(mtrx, i, j + 1, visitedCells)
+    if mtrx[i - 1][j] < 9 and (i - 1, j) not in visitedCells:
+        sum += traverse(mtrx, i - 1, j, visitedCells)
     return sum
 
 
@@ -599,19 +595,15 @@ def solvepuzzleday9part2(file1):
         ltemp = [10] + list(map(int, list(Lines[i]))) + [10]
         mtrx.append(ltemp)
     mtrx.append([10] * (linelength + 2))
-    for i in range(len(mtrx)):
-        print(mtrx[i])
-    visitedCells=set()
-    totalsums=[]
-    for i in range(1, matrixheight+1):
-        for j in range(1, linelength+1):
-            if mtrx[i][j]!=9:
-                if (i,j) not in visitedCells:
+    visitedCells = set()
+    totalsums = []
+    for i in range(1, matrixheight + 1):
+        for j in range(1, linelength + 1):
+            if mtrx[i][j] != 9:
+                if (i, j) not in visitedCells:
                     totalsums.append(traverse(mtrx, i, j, visitedCells))
     totalsums.sort()
-    print(totalsums[-1]*totalsums[-2]*totalsums[-3])
-
-
+    print(totalsums[-1] * totalsums[-2] * totalsums[-3])
 
 
 if __name__ == '__main__':
@@ -624,7 +616,7 @@ if __name__ == '__main__':
     # solvepuzzleday6part2(file1)
     # solvepuzzleday8part2(file1)
     # solvepuzzleday9part1(file1)
-    solvepuzzleday9part2(file1)
+    # solvepuzzleday9part2(file1)
 
     # solvepuzzleday7part1(file1)
     # solvepuzzleday7part2(file1)
