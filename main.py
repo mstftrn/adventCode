@@ -606,8 +606,95 @@ def solvepuzzleday9part2(file1):
     print(totalsums[-1] * totalsums[-2] * totalsums[-3])
 
 
+def stackpeek(st):
+    if len(st) > 0:
+        return st[-1]
+    else:
+        return ''
+
+
+def stackpop(st):
+    if len(st) > 0:
+        return st.pop()
+    else:
+        return ''
+
+
+def stackpush(st, a):
+    st.append(a)
+
+
+def solvepuzzleday10part1(file1):
+    Lines = file1.readlines()
+    for i in range(len(Lines)):
+        Lines[i] = Lines[i].strip()
+    d = {')': '(', ']': '[', '}': '{', '>': '<'}
+
+
+    sum=0
+    for l in Lines:
+        st = []
+        for c in l:
+            if c in d.values():
+                stackpush(st, c)
+            elif c in d.keys():
+                topchar = stackpeek(st)
+                if d[c] == topchar:
+                    stackpop(st)
+                else:
+                    if (c==')'):
+                        sum+=3
+                    elif (c==']'):
+                        sum+=57
+                    elif (c=='}'):
+                        sum+=1197
+                    elif (c=='>'):
+                        sum+=25137
+                    break
+    print(sum)
+
+
+def solvepuzzleday10part2(file1):
+    Lines = file1.readlines()
+    for i in range(len(Lines)):
+        Lines[i] = Lines[i].strip()
+    d = {')': '(', ']': '[', '}': '{', '>': '<'}
+    ivd = {v: k for k, v in d.items()}
+
+    scores=[]
+    for l in Lines:
+        st = []
+        corr=False
+        for c in l:
+            if c in d.values():
+                stackpush(st, c)
+            elif c in d.keys():
+                topchar = stackpeek(st)
+                if d[c] == topchar:
+                    stackpop(st)
+                else:
+                    corr=True
+                    break #corrupted line
+        if corr:
+            continue
+        completeline=''
+        while stackpeek(st)!='':
+            completeline+=ivd[stackpop(st)]
+        print(completeline)
+        s=0
+        dscores={')': 1, ']': 2, '}':3, '>':4}
+        for c in completeline:
+            s *= 5
+            s += dscores[c]
+        scores.append(s)
+
+    print(scores[int(len(scores)/2)])
+
+
+
+
 if __name__ == '__main__':
-    file1 = open('inputday9part1.txt', 'r')
+    file1 = open('inputday10part1.txt', 'r')
     # read file
     # file1 = open('inputday7part1.txt', 'r')
     # solvepuzzleday5part1(file1)
@@ -617,6 +704,9 @@ if __name__ == '__main__':
     # solvepuzzleday8part2(file1)
     # solvepuzzleday9part1(file1)
     # solvepuzzleday9part2(file1)
+    #solvepuzzleday10part1(file1)
+    solvepuzzleday10part2(file1)
+
 
     # solvepuzzleday7part1(file1)
     # solvepuzzleday7part2(file1)
