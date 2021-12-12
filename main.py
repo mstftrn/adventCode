@@ -630,8 +630,7 @@ def solvepuzzleday10part1(file1):
         Lines[i] = Lines[i].strip()
     d = {')': '(', ']': '[', '}': '{', '>': '<'}
 
-
-    sum=0
+    sum = 0
     for l in Lines:
         st = []
         for c in l:
@@ -642,14 +641,14 @@ def solvepuzzleday10part1(file1):
                 if d[c] == topchar:
                     stackpop(st)
                 else:
-                    if (c==')'):
-                        sum+=3
-                    elif (c==']'):
-                        sum+=57
-                    elif (c=='}'):
-                        sum+=1197
-                    elif (c=='>'):
-                        sum+=25137
+                    if (c == ')'):
+                        sum += 3
+                    elif (c == ']'):
+                        sum += 57
+                    elif (c == '}'):
+                        sum += 1197
+                    elif (c == '>'):
+                        sum += 25137
                     break
     print(sum)
 
@@ -661,10 +660,10 @@ def solvepuzzleday10part2(file1):
     d = {')': '(', ']': '[', '}': '{', '>': '<'}
     ivd = {v: k for k, v in d.items()}
 
-    scores=[]
+    scores = []
     for l in Lines:
         st = []
-        corr=False
+        corr = False
         for c in l:
             if c in d.values():
                 stackpush(st, c)
@@ -673,28 +672,133 @@ def solvepuzzleday10part2(file1):
                 if d[c] == topchar:
                     stackpop(st)
                 else:
-                    corr=True
-                    break #corrupted line
+                    corr = True
+                    break  # corrupted line
         if corr:
             continue
-        completeline=''
-        while stackpeek(st)!='':
-            completeline+=ivd[stackpop(st)]
+        completeline = ''
+        while stackpeek(st) != '':
+            completeline += ivd[stackpop(st)]
         print(completeline)
-        s=0
-        dscores={')': 1, ']': 2, '}':3, '>':4}
+        s = 0
+        dscores = {')': 1, ']': 2, '}': 3, '>': 4}
         for c in completeline:
             s *= 5
             s += dscores[c]
         scores.append(s)
 
-    print(scores[int(len(scores)/2)])
+    print(scores[int(len(scores) / 2)])
 
 
+NUMFLASHES = 0
+
+
+def checkinrangesandgreaterthan9(Lines, i, j):
+    return i > 0 and j > 0 and i < len(Lines) and j < len(Lines[0]) + 1 and Lines[i][j] > 9
+
+
+def octopusflash(i, j, Lines, flashed, allflashed):
+    global NUMFLASHES
+    if i > 0 and j > 0 and i < len(Lines) - 1 and j < len(Lines[0]) - 1 and (i, j) not in flashed:
+        Lines[i - 1][j - 1] += 1
+        Lines[i][j - 1] += 1
+        Lines[i + 1][j - 1] += 1
+        Lines[i - 1][j] += 1
+        Lines[i + 1][j] += 1
+        Lines[i - 1][j + 1] += 1
+        Lines[i][j + 1] += 1
+        Lines[i + 1][j + 1] += 1
+        flashed.add((i, j))
+
+        allflashed[i-1][j-1]=True
+
+        NUMFLASHES += 1
+        if checkinrangesandgreaterthan9(Lines, i - 1, j - 1):
+            octopusflash(i - 1, j - 1, Lines, flashed, allflashed)
+        if checkinrangesandgreaterthan9(Lines, i, j - 1):
+            octopusflash(i, j - 1, Lines, flashed, allflashed)
+        if checkinrangesandgreaterthan9(Lines, i + 1, j - 1):
+            octopusflash(i + 1, j - 1, Lines, flashed, allflashed)
+        if checkinrangesandgreaterthan9(Lines, i - 1, j):
+            octopusflash(i - 1, j, Lines, flashed, allflashed)
+        if checkinrangesandgreaterthan9(Lines, i + 1, j):
+            octopusflash(i + 1, j, Lines, flashed, allflashed)
+        if checkinrangesandgreaterthan9(Lines, i - 1, j + 1):
+            octopusflash(i - 1, j + 1, Lines, flashed, allflashed)
+        if checkinrangesandgreaterthan9(Lines, i, j + 1):
+            octopusflash(i, j + 1, Lines, flashed, allflashed)
+        if checkinrangesandgreaterthan9(Lines, i + 1, j + 1):
+            octopusflash(i + 1, j + 1, Lines, flashed, allflashed)
+
+
+def octopusstep(Lines, allflashed):
+    for i in range(1, len(Lines) - 1):
+        for j in range(1, len(Lines[0]) - 1):
+            Lines[i][j] += 1
+    flashed = set()
+    for i in range(1, len(Lines) - 1):
+        for j in range(1, len(Lines[0]) - 1):
+            if Lines[i][j] > 9:
+                octopusflash(i, j, Lines, flashed, allflashed)
+    for f in flashed:
+        Lines[f[0]][f[1]] = 0
+
+
+def solvepuzzleday11part1(file1):
+    numsteps = 100
+    Lines = file1.readlines()
+    for i in range(len(Lines)):
+        Lines[i] = Lines[i].strip()
+        Lines[i] = list(Lines[i])
+        Lines[i] = list(map(int, Lines[i]))
+        Lines[i].insert(0, 0)
+        Lines[i].append(0)
+    a = [0] * len(Lines[0])
+    b = [0] * len(Lines[0])
+    Lines.append(b)
+    Lines.insert(0, a)
+    for _ in range(numsteps):
+        octopusstep(Lines, allflashed)
+    for i in range(1, len(Lines) - 1):
+        for j in range(1, len(Lines[0]) - 1):
+            print(Lines[i][j], end='')
+        print()
+    global NUMFLASHES
+    print(NUMFLASHES)
+
+
+def solvepuzzleday11part2(file1):
+
+    Lines = file1.readlines()
+    for i in range(len(Lines)):
+        Lines[i] = Lines[i].strip()
+        Lines[i] = list(Lines[i])
+        Lines[i] = list(map(int, Lines[i]))
+        Lines[i].insert(0, 0)
+        Lines[i].append(0)
+    a = [0] * len(Lines[0])
+    b = [0] * len(Lines[0])
+    Lines.append(b)
+    Lines.insert(0, a)
+
+    i=0
+    while True:
+        allflashed = [[False] * (len(Lines[0]) - 2)]
+        for i in range(1, len(Lines) - 2):
+            allflashed.append([False] * (len(Lines[0]) - 2))
+
+        octopusstep(Lines, allflashed)
+        i += 1
+        blasted = []
+        for a in allflashed:
+            blasted.append(functools.reduce(lambda x, y: x and y, a))
+        if functools.reduce(lambda x, y: x and y, blasted):
+            print(i)
+            return
 
 
 if __name__ == '__main__':
-    file1 = open('inputday10part1.txt', 'r')
+    file1 = open('inputday11part1.txt', 'r')
     # read file
     # file1 = open('inputday7part1.txt', 'r')
     # solvepuzzleday5part1(file1)
@@ -704,9 +808,10 @@ if __name__ == '__main__':
     # solvepuzzleday8part2(file1)
     # solvepuzzleday9part1(file1)
     # solvepuzzleday9part2(file1)
-    #solvepuzzleday10part1(file1)
-    solvepuzzleday10part2(file1)
-
+    # solvepuzzleday10part1(file1)
+    # solvepuzzleday10part2(file1)
+    # solvepuzzleday11part1(file1)
+    solvepuzzleday11part2(file1)
 
     # solvepuzzleday7part1(file1)
     # solvepuzzleday7part2(file1)
