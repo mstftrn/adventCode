@@ -784,12 +784,13 @@ def solvepuzzleday11part2(file1):
     i=0
     while True:
         allflashed = [[False] * (len(Lines[0]) - 2)]
-        for i in range(1, len(Lines) - 2):
+        for _ in range(1, len(Lines) - 2):
             allflashed.append([False] * (len(Lines[0]) - 2))
 
         octopusstep(Lines, allflashed)
         i += 1
         blasted = []
+        print(allflashed)
         for a in allflashed:
             blasted.append(functools.reduce(lambda x, y: x and y, a))
         if functools.reduce(lambda x, y: x and y, blasted):
