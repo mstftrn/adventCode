@@ -798,8 +798,79 @@ def solvepuzzleday11part2(file1):
             return
 
 
+def foldx(coords, foldnum):
+    newcoords=coords.copy()
+    for c in coords:
+        if c[0]>foldnum:
+            newcoords.add((foldnum-(c[0]-foldnum), c[1]))
+            newcoords.remove(c)
+        elif c[0]==foldnum:
+            newcoords.remove(c)
+    return newcoords
+
+
+def foldy(coords, foldnum):
+    newcoords=coords.copy()
+    for c in coords:
+        if c[1]>foldnum:
+            newcoords.add((c[0], foldnum-(c[1]-foldnum)))
+            newcoords.remove(c)
+        elif c[1]==foldnum:
+            newcoords.remove(c)
+    return newcoords
+
+
+def solvepuzzleday13part1(file1):
+    coords=set()
+    while True:
+        l=file1.readline()
+        if l.strip()=='':
+            break
+        a,b = l.strip().split(',')
+        coords.add((int(a),int(b)))
+    firstfold=file1.readline()
+    xy, foldnum=firstfold.strip().split(' ')[2].split('=')
+    if xy=='x':
+        newcoords=foldx(coords, int(foldnum))
+        print(len(newcoords))
+
+def solvepuzzleday13part2(file1):
+    coords=set()
+    while True:
+        l=file1.readline()
+        if l.strip()=='':
+            break
+        a,b = l.strip().split(',')
+        coords.add((int(a),int(b)))
+    folds=file1.readlines()
+    for f in folds:
+        xy, foldnum=f.strip().split(' ')[2].split('=')
+        if xy=='x':
+            coords=foldx(coords, int(foldnum))
+        elif xy=='y':
+            coords = foldy(coords, int(foldnum))
+
+    print(coords)
+    maxx=0
+    maxy=0
+    for c in coords:
+        if c[0]>maxx:
+            maxx=c[0]
+        if c[1]>maxy:
+            maxy=c[1]
+    for j in range(maxy+1):
+        for i in range(maxx+1):
+            if (i, j) in coords:
+                print('#', end='')
+            else:
+                print('.', end='')
+        print()
+
+
+
+
 if __name__ == '__main__':
-    file1 = open('inputday11part1.txt', 'r')
+    file1 = open('inputday13part1.txt', 'r')
     # read file
     # file1 = open('inputday7part1.txt', 'r')
     # solvepuzzleday5part1(file1)
@@ -812,7 +883,9 @@ if __name__ == '__main__':
     # solvepuzzleday10part1(file1)
     # solvepuzzleday10part2(file1)
     # solvepuzzleday11part1(file1)
-    solvepuzzleday11part2(file1)
+    # solvepuzzleday11part2(file1)
+    # solvepuzzleday13part1(file1)
+    solvepuzzleday13part2(file1)
 
     # solvepuzzleday7part1(file1)
     # solvepuzzleday7part2(file1)
